@@ -21,14 +21,16 @@ $(document).ready(function() {
 
 	// });
 	$("button").click(function(event) {
-		var username = $("input[name='login_username']").val();
-		var password = $("input[name='login_password']").val();
+		// alert("666");
+		var username = $("input[name='username']").val();
+		var password = $("input[name='password']").val();
 		if (username == '' || password == '') {
 			$(".alert").removeClass('hide');
 			$(".alert").addClass('show');
 			$("p").html("用户名或密码不能为空");
 			return false;
-		}else if (username.length < 3) {
+		}
+		else if (username.length < 3) {
 			$(".alert").removeClass('hide');
 			$(".alert").addClass('show');
 			$("p").html("用户名不能小于3位");

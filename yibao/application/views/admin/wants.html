@@ -5,12 +5,12 @@
 	<title>易宝后台管理</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" type="image/x-icon" href="../img/icon.png" />
-	<script src="../js/jquery.min.js"></script>
-	<script src="../js/bootstrap.min.js"></script>
-	<script src="../js/index.js"></script>
-	<link rel="stylesheet" href="../css/bootstrap.min.css">
-	<link rel="stylesheet" href="../css/index.css">
+	<link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url('/style/img/icon.png') ?>" />
+	<script src=" <?php echo base_url('/style/js/jquery.min.js') ?> "></script>
+	<script src="<?php echo base_url('/style/js/bootstrap.min.js') ?>"></script>
+	<script src="<?php echo base_url('/style/js/index.js') ?>"></script>
+	<link rel="stylesheet" href="<?php echo base_url('/style/css/bootstrap.min.css') ?>">
+	<link rel="stylesheet" href="<?php echo base_url('/style/css/index.css') ?>">
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -23,14 +23,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="../index.html"><img src="../img/icon.png" alt=""></a>
+          <a class="navbar-brand" href="<?php echo site_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
         </div>
 
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="navbar">
 	      <ul class="nav navbar-nav">
-	        <li><a href="goods.html">商品管理</a></li>
-	        <li><a href="wants.html">需求管理</a></li>
+	        <li><a href="<?php echo site_url('admin/main/show_goods') ?>">商品管理</a></li>
+	        <li><a href="<?php echo site_url('admin/main/show_wants') ?>">需求管理</a></li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
 	        <li class="dropdown">
