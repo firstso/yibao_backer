@@ -47,9 +47,29 @@ class Goods_model extends CI_model
 
 	}
 
+	/*判断是否为本人商品*/
+	function is_goods_sno($gid, $sno)
+	{
+		$this->db->where('gid',$gid);
+		$query = $this->db->get('goods');
+		$query = $query->result_array()[0];
+		
+		//judge sno and the sno of goods
+		if($query['sno'] != $sno) 
+		{
+			return false;
+		}
+		else 
+		{
+			return true;
+		}
+
+	}
+
 	/*商品删除接口调用函数*/
 	function delete_all_goods($gid)
 	{
+		
 		/*删除商品实际目录下图片*/
 		$this->db->where('gid',$gid);
 		$query = $this->db->get('goods_image');
@@ -85,6 +105,12 @@ class Goods_model extends CI_model
 		return true;
 		
 	}
+
+	/**
+	*未解决问题：学号如果不存在
+	*$res = $res->result_array()[0];会错误
+	*
+	*/
 
 	function show_all_goods($sno, $gid)
 	{
@@ -175,19 +201,23 @@ class Goods_model extends CI_model
 		$this->db->order_by('gid', 'DESC');
 		if($type == 0)
 		{
-			$query = $this->db->get('goods');
-			//$query = $this->db->get('goods', $limit, $page*$limit);
+			// $query = $this->db->get('goods');
+			$query = $this->db->get('goods', $limit, $page*$limit);
 		}
 		else
 		{
-			$query = $this->db->get('goods_collection');
-			//$query = $this->db->get('goods_collection', $limit, $page*$limit);
+			// $query = $this->db->get('goods_collection');
+			$query = $this->db->get('goods_collection', $limit, $page*$limit);
 		}
 
 		$gids = $query->result_array();
 		$gids = array_column($gids, 'gid');
 
-		$res[0] = "暂无信息";
+		if(count($gids) == 0) {
+			return null;
+		}
+
+		// $res[0] = "";
 		for ($i=0; $i < count($gids); $i++) 
 		{ 
 			$res[$i] = $this->Goods_model->show_all_goods($sno, $gids[$i]);
@@ -217,8 +247,8 @@ class Goods_model extends CI_model
 		$this->db->where('type >=', $type);
 		$this->db->where('type <=', $type + $range);
 
-		$query = $this->db->get('goods')->result_array();
-		// $query = $this->db->get('goods', $limit, $page*$limit)->result_array();
+		// $query = $this->db->get('goods')->result_array();
+		$query = $this->db->get('goods', $limit, $page*$limit)->result_array();
 		$gids = array_column($query, 'gid');
 
 		$res[0] = "暂无信息";
@@ -244,8 +274,25 @@ class Goods_model extends CI_model
 		$limit = 10;//每次查询10条数据
 		$this->db->distinct();
 		$this->db->select('goods.gid');
-		$this->db->order_by('goods.gid', 'DESC');
-		$this->db->where('type',$type);
+
+		/*先得到类型范围，如12300，可选范围为12300到12399*/
+		$string = (string)$type;
+		$range = 1;
+		for ($i=strlen($string) - 1; $i > 0 ; $i--) 
+		{ 
+			if($string[$i] != 0)
+			{
+				$range--;
+				break;
+			}
+			$range *= 10;
+		}
+		
+		$limit = 10;//每次取10条数据
+		$this->db->order_by('gid', 'DESC');
+		$this->db->where('type >=', $type);
+		$this->db->where('type <=', $type + $range);
+
 		foreach ($words as $key => $value) 
 		{
 			$this->db->or_like('goods_name',$value,'both');
@@ -253,8 +300,8 @@ class Goods_model extends CI_model
 			$this->db->or_like('gtag_description', $value, 'both');
 		}		
 		$this->db->join('goods_tag', 'goods_tag.gid = goods.gid');
-		$query = $this->db->get('goods')->result_array();
-		// $query = $this->db->get('goods', $limit, $page*$limit)->result_array();
+		// $query = $this->db->get('goods')->result_array();
+		$query = $this->db->get('goods', $limit, $page*$limit)->result_array();
 		//echo $this->db->last_query();
 		$gids = array_column($query, 'gid');
 
