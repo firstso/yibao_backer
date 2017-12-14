@@ -37,7 +37,6 @@ class Goods extends MY_Controller
 					'sno' => $this->sno,
 					'time' => date("Y-m-d H:i:s")
 				);
-                               
 				$tag = $this->input->post('tag',true);
 				if(empty($data['description']))
 				{
@@ -310,15 +309,17 @@ class Goods extends MY_Controller
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('content','content','required|max_length[20]');
 			$this->form_validation->set_rules('page','page','required|integer');//必须为整数
+			$this->form_validation->set_rules('type','type','required|integer');
 
 			/*验证输入*/
 			if($this->form_validation->run() != false)
 			{
 				$content = $this->input->post('content');
 				$page = $this->input->post('page');
+				$type = $this->input->post('type');
 
 			    //$this->db->cache_off();
-				$json['goods'] = $this->Goods_model->show_goods_by_content($this->sno,$content,$page);
+				$json['goods'] = $this->Goods_model->show_goods_by_content($this->sno,$content,$page,$type);
 				if($json['goods'] == false)
 				{
 					throw new Exception("商品查询内容请求调用分词网站超时!", 1);

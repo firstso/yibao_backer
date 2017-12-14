@@ -230,7 +230,7 @@ class Goods_model extends CI_model
 
 	}
 
-	function show_goods_by_content($sno,$content,$page)
+	function show_goods_by_content($sno,$content,$page,$type)
 	{
 		/*调用分词接口，将content划分为多个关键词*/
 		$words = $this->Goods_model->get_json_decode($content);
@@ -245,6 +245,7 @@ class Goods_model extends CI_model
 		$this->db->distinct();
 		$this->db->select('goods.gid');
 		$this->db->order_by('goods.gid', 'DESC');
+		$this->db->where('type',$type);
 		foreach ($words as $key => $value) 
 		{
 			$this->db->or_like('goods_name',$value,'both');

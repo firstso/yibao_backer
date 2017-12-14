@@ -37,6 +37,9 @@ class Books extends MY_Controller
 					'status' => 1,//0表示未租借
 					'rent_times' => 0,
 					'deadline' => 0,//表示没有租借
+					'rent_sno' => "",//暂时没有租借者信息
+					'wait_sno' => "",//无预约者
+					'wait_status' => 1//1表示未预约
 				);
 
 				/*插入数据库*/
@@ -81,7 +84,7 @@ class Books extends MY_Controller
 			/*组合$config*/
 			$i++;
             $config['upload_path'] = '/usr/share/nginx/html/yibao/public/books/';
-            //$config['upload_path'] = './public/books_photo/';
+            // $config['upload_path'] = './public/books_photo/';
             $config['allowed_types'] = 'jepg|jpg|png';
             $config['file_name'] = $this->sno.time().$i;//命名方式为学号+时间+第几张图片
             $config['max_size'] = 10240;
@@ -113,7 +116,7 @@ class Books extends MY_Controller
 	}
 
 	/**
-	*根据类别显示商品接口
+	*根据类别显示图书接口
 	*/
 	function show_books_by_type()
 	{
@@ -161,6 +164,7 @@ class Books extends MY_Controller
 			{
 				$bid = $this->input->post('bid');
 				$days = $this->input->post('days');
+				$sno = $this->sno;//借书人信息
 
 				$res = $this->Books_model->bid_is_exist($bid);
 				if($res == false)
@@ -169,7 +173,7 @@ class Books extends MY_Controller
 				}
 
 				// 判断该图书可不可借,租借图书
-				$res = $this->Books_model->rent_books($bid,$days);
+				$res = $this->Books_model->rent_books($bid,$days,$sno);
 				if($res == 0)
 				{
 					throw new Exception("图书已经被租借！", 1);
@@ -198,6 +202,7 @@ class Books extends MY_Controller
 		}
 	}
 
+
 	public function return_books ()
 	{
 		try
@@ -209,21 +214,78 @@ class Books extends MY_Controller
 			{
 				$bid = $this->input->post('bid');
 				$res = $this->Books_model->bid_is_exist($bid);
+				$sno = $this->sno;
+
 				if($res == false)
 				{
 					throw new Exception("图书ID不存在！", 1);
 				}
 
-				//还书
-				$res = $this->Books_model->return_books($bid);
-				if($res == false)
+				//还书,需要判断是否本人操作
+				$res = $this->Books_model->return_books($bid, $sno);
+				if($res == 0)
 				{
-					throw new Exception("图书归还信息记录错误,请再次尝试！", 1);
+					throw new Exception("此书他人所借，你无权操作！", 1);
+				}
+				if($res == 1)
+				{
+					throw new Exception("图书归还数据库操作出错,请再次尝试！", 1);
 				}
 				
-				$json['books'] = $this->Books_model->show_books_by_type(20000, 0);
+				$json['books'] = $this->Books_model->show_books_by_type(20000, 0 ,$sno);
 				echo_success($json);
 				
+			} 
+			else 
+			{
+				$message = trim(strip_tags(validation_errors()));
+				throw new Exception($message, 1);
+			}
+
+		}
+
+		catch(Exception $e)
+		{
+			echo_failure(60103,$e->getMessage());
+		}
+		
+	}
+
+	//预约书籍
+	public function order_books ()
+	{
+		try
+		{
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('bid','bid','required');
+
+			if($this->form_validation->run() != false)
+			{
+				$bid = $this->input->post('bid');
+				$sno = $this->sno;//预约人信息
+
+				$res = $this->Books_model->bid_is_exist($bid);
+				if($res == false)
+				{
+					throw new Exception("图书ID不存在！", 1);
+				}
+
+				// 判断该图书可不可借,租借图书
+				$res = $this->Books_model->order_books($bid, $sno);
+				if($res == 0)
+				{
+					throw new Exception("图书已经被预约！", 1);
+				}
+				else if($res == 1)
+				{
+					throw new Exception("图书租租借数据库操作出错，请再次尝试！", 1);
+				}
+				else
+				{
+					$json['books'] = $this->Books_model->show_books_by_type(20000, 0);
+					echo_success($json);
+				}
+
 			} 
 			else 
 			{
@@ -236,7 +298,8 @@ class Books extends MY_Controller
 		{
 			echo_failure(60103,$e->getMessage());
 		}
-		
 	}
-}
+
+	}
+
 ?>
