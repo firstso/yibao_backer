@@ -168,6 +168,7 @@ class Goods extends MY_Controller
 		try
 		{
 			$gid = $this->input->post('gid');
+			$sno = $this->sno;
 
 			/*判断商品ID是否存在*/
 			$res = $this->Goods_model->gid_is_exist($gid);
@@ -175,7 +176,12 @@ class Goods extends MY_Controller
 			{
 				throw new Exception("!商品ID不存在！", 1);
 			}
-
+			/*判断是否本人操作*/
+			$res = $this->Goods_model->is_goods_sno($gid, $sno);
+			if($res == false)
+			{
+				throw new Exception("非本人操作!", 1);
+			}
 
 			/*删除数据库信息*/
 			$res = $this->Goods_model->delete_all_goods($gid);
@@ -186,7 +192,7 @@ class Goods extends MY_Controller
 			
 			/*返回此人发布所有商品*/
 			/*此处bug，将多个表名构成的数组去delete，再调用show_goods_by_sno得不到数据*/
-			$sno = $this->sno;
+			
 			$json['goods'] = $this->Goods_model->show_goods_by_sno($sno, 0, 0);
 			echo_success($json);
 			

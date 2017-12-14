@@ -81,18 +81,24 @@ class Books_model extends CI_Model
 			}
 			$range *= 10;
 		}
-
-		//$limit = 10;//每次取10条数据
+		// echo $range;
+		$limit = 10;//每次取10条数据
 		$this->db->order_by('status', 'DESC');
 		$this->db->where('type >=', $type);
 		//$this->db->where('type <=', 21998);//?蜜汁bug $type《= type《=21999就没有查询语句，21998还有(因为自己cache)
 		$this->db->where('type <=', $type + $range);
-		$query = $this->db->get('books')->result_array();
+		$query = $this->db->get('books', $limit, $page*$limit)->result_array();
+
+        // $query = $this->db->get('books')->result_array();
+		// print_r($query);
 
 		$bids = array_column($query, 'bid');
 
-
-		$res[0] = "暂无信息";
+		if(count($bids) == 0) 
+		{
+			return null;
+		}
+		// $res[0] = "暂无信息";
 		for ($i=0; $i < count($bids); $i++) 
 		{ 
 			$res[$i] = $this->Books_model->show_books_by_bid($bids[$i]);
