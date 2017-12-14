@@ -62,14 +62,19 @@ class MY_Controller extends CI_Controller
 }
 
 
-class Admin_Controller extends CI_Controller{
-		public function __construct(){
-		parent::__construct();
+class Admin_Controller extends CI_Controller
+{
 
-]		if (! $this->session->userdata('username')){
-			redirect('admin/privilege/login');
+	    function __construct()
+	    {
+	    	
+			parent::__construct();
+
+			if ( ! isset($_SESSION['username']) )
+			{
+				redirect('admin/Privilege/login');
+			}
 		}
-	}
 }
 
 
