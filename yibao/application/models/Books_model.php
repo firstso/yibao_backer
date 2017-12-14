@@ -43,7 +43,10 @@ class Books_model extends CI_Model
 		
 		/*根据用户名获取昵称，头像路径*/
 		$res = $this->db->get_where('user',array('sno' => $query['sno']));
+		// print_r($res->result_array());//test
 		$res = $res->result_array()[0];
+		// print_r($res);
+
 		$query['nickname'] = $res['nickname'];
 		$query['avatar_path'] = $res['avatar_path'];
 		
@@ -98,7 +101,7 @@ class Books_model extends CI_Model
 
 	}
 
-	public function rent_books($bid,$days)
+	public function rent_books($bid,$days,$sno)
 	{
 		$res = $this->db->get_where('books', array('bid' => $bid));
 		$res = $res->result_array()[0];
@@ -111,10 +114,13 @@ class Books_model extends CI_Model
 		/*修改租借次数，到期时间，租借状态*/
 		$rent_times = $res['rent_times']+1;
 		$deadline = time() + $days*86400;
+		
 		$this->db->where('bid', $bid);
+		$this->db->set('rent_sno',$sno);//暂时无法测试，注释
 		$this->db->set('status', 0);
 		$this->db->set('rent_times', $rent_times);
 		$this->db->set('deadline', $deadline);
+
 		$query = $this->db->update('books');
 		if($query == false)
 		{
@@ -125,23 +131,65 @@ class Books_model extends CI_Model
 	}
 
 
-	public function return_books($bid)
+	public function return_books($bid, $sno)
+	{
+		$res = $this->db->get_where('books', array('bid' => $bid));
+		$res = $res->result_array()[0];
+
+		//非借书人操作
+		if($res['rent_sno'] != $sno) {
+			return 0;
+		}
+
+		//如果当前有人预约，修改当前预约人为借书人，预约状态为可预约
+		$this->db->where('bid', $bid);
+		$this->db->where('rent_sno', $sno);
+		if($res['wait_status'] == 0) {
+			$this->db->set('rent_sno', $res['wait_sno']);
+			$this->db->set('wait_sno',"");
+			$this->db->set('wait_status',1);
+			$deadline = time() + 30*86400;//?
+			
+		}
+		else {
+			$this->db->set('rent_sno',"");
+			$this->db->set('status', 1);
+			$deadline = 0;
+		}
+		$this->db->set('deadline', $deadline);
+		
+		
+		$query = $this->db->update('books');
+		if($query == false)
+		{
+			return 1;
+		}
+
+		return 2;
+	}
+
+	public function order_books($bid,$sno)
 	{
 		$res = $this->db->get_where('books', array('bid' => $bid));
 		$res = $res->result_array()[0];
 		//print_r($res);
 
-		/*修改到期时间为0，租借状态*/
+		if($res['wait_status'] == 0)
+		{
+			return 0;
+		}
+		/*修改预约状态，预约人*/		
 		$this->db->where('bid', $bid);
-		$this->db->set('status', 1);
-		$this->db->set('deadline', 0);
+		$this->db->set('wait_sno',$sno);
+		$this->db->set('wait_status', 0);
+
 		$query = $this->db->update('books');
 		if($query == false)
 		{
-			return false;
+			return 1;
 		}
 
-		return true;
+		return 2;
 	}
 
 
