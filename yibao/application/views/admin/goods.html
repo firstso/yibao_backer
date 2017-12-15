@@ -39,88 +39,57 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo site_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
+          <a class="navbar-brand" href="<?php echo base_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
         </div>
 
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="navbar">
 	      <ul class="nav navbar-nav">
-	        <li><a href="<?php echo site_url('admin/main/show_goods') ?>">商品管理</a></li>
-	        <li><a href="<?php echo site_url('admin/main/show_wants') ?>">需求管理</a></li>
+	        <li class="active"><a href="<?php echo base_url('admin/main/show_goods') ?>">商品管理</a></li>
+	        <li><a href="<?php echo base_url('admin/main/show_wants') ?>">需求管理</a></li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
 	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">用户名 <span class="caret"></span></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="#">我的信息</a></li>
-	            <li role="separator" class="divider"></li>
-	            <li><a href="#">注销登录</a></li>
-	          </ul>
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $_SESSION['username']  ?></a>
 	        </li>
-	        <li><a href="#">退出</a></li>
+	        <li><a href="<?php  echo base_url('admin/Privilege/logout') ?>">退出</a></li>
 	      </ul>
 	    </div>
 	  </div>
 	</nav>
 
 	<div class="media">
-
+	
+	<?php  foreach($goods as $each):?>
+		
+	<form method = "POST" action="<?php echo base_url('admin/main/delete_goods') ?>" >
+		
 		<div class="container">
 		  <div class="row" >
 			<div class="col-sm-3">
 				<!-- img-responsive图片响应式 -->
-				<img src="../img/book.jpg" class="img-responsive" alt="">
+				<img src="<?php echo base_url().$each['photo'][0]   ?>" class="img-responsive" alt="">
 			</div>
 			<div class="col-sm-9">
-				<h3>出售一本二手英语书</h3>
-				<p>这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。</p>
+				<h3><?php echo $each['goods_name'] ?></h3>
+				<p><?php echo $each['description'] ?></p>
 				<div class="detail">
-				    <span>麻瓜</span>
-				    <span>发布于</span>
-				    <span>2017-10-10 14:50:20</span>
+					<span style="color: red;font-size: 20px;padding: 0 5px;">￥<?php echo $each['price'] ?></span>
+				    <span><?php echo $each['nickname'] ?></span>
+				    <span style="padding: 0 5px;">发布于</span>
+				    <span><?php echo $each['time'] ?></span>
+					<input type="hidden"  name="gid" value="<?php  echo $each['gid']  ?>  "  >
+
 			    </div>
 			    <button class="btn btn-danger" id="delete-good">删除此商品</button>
 			</div>
 		</div>
 		</div>
 
-		<div class="container">
-		  <div class="row" >
-			<div class="col-sm-3">
-				<!-- img-responsive图片响应式 -->
-				<img src="../img/book.jpg" class="img-responsive" alt="">
-			</div>
-			<div class="col-sm-9">
-				<h3>出售一本二手英语书</h3>
-				<p>这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。</p>
-				<div class="detail">
-				    <span>麻瓜</span>
-				    <span>发布于</span>
-				    <span>2017-10-10 14:50:20</span>
-			    </div>
-			    <button class="btn btn-danger" id="delete-good">删除此商品</button>
-			</div>
-		</div>
-		</div>
+	</form>
 
-		<div class="container">
-		  <div class="row" >
-			<div class="col-sm-3">
-				<!-- img-responsive图片响应式 -->
-				<img src="../img/book.jpg" class="img-responsive" alt="">
-			</div>
-			<div class="col-sm-9">
-				<h3>出售一本二手英语书</h3>
-				<p>这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。</p>
-				<div class="detail">
-				    <span>麻瓜</span>
-				    <span>发布于</span>
-				    <span>2017-10-10 14:50:20</span>
-			    </div>
-			    <button class="btn btn-danger" id="delete-good">删除此商品</button>
-			</div>
-		</div>
-		</div>
+	<?php  endforeach ?>
+
 
 	</div>
 </body>
