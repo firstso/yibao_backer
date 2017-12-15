@@ -149,6 +149,46 @@ class Books extends MY_Controller
 		
 	}
 
+	/*根据图书名称模糊查询*/
+	function show_books_by_content()
+	{
+		try
+		{
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('content','content','required|max_length[20]');
+			$this->form_validation->set_rules('page','page','required|integer');//必须为整数
+			$this->form_validation->set_rules('type','type','required|integer');
+
+			/*验证输入*/
+			if($this->form_validation->run() != false)
+			{
+				$content = $this->input->post('content');
+				$page = $this->input->post('page');
+				$type = $this->input->post('type');
+
+			    //$this->db->cache_off();
+				$json['books'] = $this->Books_model->show_books_by_content($content,$page,$type);
+				if($json['books'] == -1)
+				{
+					throw new Exception("图书查询内容请求调用分词网站超时!", 1);
+				}
+				
+				echo_success($json);
+			}
+			else
+			{
+				$message = trim(strip_tags(validation_errors()));
+				throw new Exception($message, 1);
+			}
+			
+		}
+		catch(Exception $e)
+		{
+			echo_failure(60106,$e->getMessage());
+		}
+		
+	}
+
 	/**
 	*租借图书
 	*/
@@ -278,7 +318,7 @@ class Books extends MY_Controller
 				}
 				else if($res == 1)
 				{
-					throw new Exception("图书租租借数据库操作出错，请再次尝试！", 1);
+					throw new Exception("图书租借数据库操作出错，请再次尝试！", 1);
 				}
 				else
 				{

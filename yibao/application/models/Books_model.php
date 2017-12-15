@@ -107,6 +107,60 @@ class Books_model extends CI_Model
 
 	}
 
+	function show_books_by_content($content,$page,$type)
+	{
+		/*调用分词接口，将content划分为多个关键词*/
+		$words = $this->Books_model->get_json_decode($content);
+		if ($words == false) 
+		{
+			return -1;
+		} 
+		//print_r($words);
+
+		/*先得到类型范围，如12300，可选范围为12300到12399*/
+		$string = (string)$type;
+		$range = 1;
+		for ($i=strlen($string) - 1; $i > 0 ; $i--) 
+		{ 
+			if($string[$i] != 0)
+			{
+				$range--;
+				break;
+			}
+			$range *= 10;
+		}
+		
+		$limit = 10;//每次取10条数据
+		/*根据图书名模糊查询*/
+        $this->db->distinct();
+		$this->db->select('bid');
+		$this->db->where('type >=', $type);
+		$this->db->where('type <=', $type + $range);
+		$newtype = $type+$range;
+		foreach ($words as $key => $value) 
+		{
+			$this->db->like('books_name',$value,'both');
+		}		
+		$this->db->order_by('bid', 'DESC');
+		$query = $this->db->get('books', $limit, $page*$limit)->result_array();
+		// echo $this->db->last_query();
+		$bids = array_column($query, 'bid');
+		// print_r($gids);
+
+		if(count($bids) == 0) 
+		{
+			return null;
+		}
+		for ($i=0; $i < count($bids); $i++) 
+		{ 
+			$res[$i] = $this->Books_model->show_books_by_bid($bids[$i]);
+		}
+		//print_r($res);
+
+		return $res;
+		
+	}
+
 	public function rent_books($bid,$days,$sno)
 	{
 		$res = $this->db->get_where('books', array('bid' => $bid));
@@ -205,6 +259,49 @@ class Books_model extends CI_Model
 		$query = $this->db->get_where('books',array('bid' => $bid));
 		$res = $query->num_rows();
 		return $res;
+	}
+
+	/*将content分词*/
+	function get_json_decode($content)
+	{
+	    // 初始化curl
+	    $ch = curl_init();
+	    //SCWS(简易中文分词)基于HTTP/POST的分词API
+	    $url = "http://www.xunsearch.com/scws/api.php";
+
+	    // 设置URL参数 
+	    curl_setopt($ch, CURLOPT_URL, $url);
+	    // 设置CURL允许执行的最长秒数
+	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	    // 要求CURL返回数据
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	    //设置参数
+	    $post_data = array (
+	        'data' => $content,
+	        'respond' => 'json',// 响应结果格式为json
+	        'ignore' => 'yes'//忽略标点符号
+	    );
+	    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+
+	    // 执行请求
+	    $result = curl_exec( $ch );
+	    // 获取http状态
+	    $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+	    if ($http_code != 200) 
+	    {
+	        return false;
+	    }
+	    //取得返回的结果转换成对象,json_decode($result);
+	    //取得返回的结果,转换成数组
+	    $data = json_decode( $result,true);
+	    $data = $data['words'];
+
+	    //提取word一列
+	    $words = array_column($data, 'word');
+	    // 关闭CURL
+	    curl_close ( $ch );
+	    return $words;
 	}
 }
 ?>

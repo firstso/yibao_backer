@@ -281,7 +281,7 @@ class Goods extends MY_Controller
 		try
 		{
 			$this->load->library('form_validation');
-			$this->form_validation->set_rules('type','type','required|greater_than[0]');//必须大于0
+			$this->form_validation->set_rules('type','type','required');
 			$this->form_validation->set_rules('page','page','required|integer');//必须为整数
 
 			/*验证输入*/
@@ -326,10 +326,11 @@ class Goods extends MY_Controller
 
 			    //$this->db->cache_off();
 				$json['goods'] = $this->Goods_model->show_goods_by_content($this->sno,$content,$page,$type);
-				if($json['goods'] == false)
+				if($json['goods'] == -1)
 				{
 					throw new Exception("商品查询内容请求调用分词网站超时!", 1);
 				}
+				
 				echo_success($json);
 			}
 			else

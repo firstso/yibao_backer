@@ -106,12 +106,6 @@ class Goods_model extends CI_model
 		
 	}
 
-	/**
-	*未解决问题：学号如果不存在
-	*$res = $res->result_array()[0];会错误
-	*
-	*/
-
 	function show_all_goods($sno, $gid)
 	{
 		//$this->db->cache_on();
@@ -251,7 +245,10 @@ class Goods_model extends CI_model
 		$query = $this->db->get('goods', $limit, $page*$limit)->result_array();
 		$gids = array_column($query, 'gid');
 
-		$res[0] = "暂无信息";
+		if(count($gids) == 0) 
+		{
+			return null;
+		}
 		for ($i=0; $i < count($gids); $i++) 
 		{ 
 			$res[$i] = $this->Goods_model->show_all_goods($sno, $gids[$i]);
@@ -266,7 +263,7 @@ class Goods_model extends CI_model
 		$words = $this->Goods_model->get_json_decode($content);
 		if ($words == false) 
 		{
-			return false;
+			return -1;
 		} 
 		//print_r($words);
 
@@ -289,23 +286,34 @@ class Goods_model extends CI_model
 		}
 		
 		$limit = 10;//每次取10条数据
-		$this->db->order_by('gid', 'DESC');
-		$this->db->where('type >=', $type);
-		$this->db->where('type <=', $type + $range);
 
+		
+		
+
+		$this->db->join('goods_tag', 'goods_tag.gid = goods.gid');
+        
+		// $this->db->where('type >=', $type);
+		// $this->db->where('type <=', $type + $range);
+		$newtype = $type+$range;
 		foreach ($words as $key => $value) 
 		{
-			$this->db->or_like('goods_name',$value,'both');
-			$this->db->or_like('description', $value, 'both');
-			$this->db->or_like('gtag_description', $value, 'both');
+			$where = "type >= ".$type." AND type <= ".$newtype." AND (goods_name LIKE '%".$value."%' or description LIKE '%".$value."%' or gtag_description LIKE '%".$value."%')";
+			// $this->db->or_like('goods_name',$value,'both');
+			// $this->db->or_like('description', $value, 'both');
+			// $this->db->or_like('gtag_description', $value, 'both');
 		}		
-		$this->db->join('goods_tag', 'goods_tag.gid = goods.gid');
+		$this->db->where($where);
+		$this->db->order_by('gid', 'DESC');
 		// $query = $this->db->get('goods')->result_array();
 		$query = $this->db->get('goods', $limit, $page*$limit)->result_array();
-		//echo $this->db->last_query();
+		// echo $this->db->last_query();
 		$gids = array_column($query, 'gid');
+		// print_r($gids);
 
-		$res[0] = "暂无信息";
+		if(count($gids) == 0) 
+		{
+			return null;
+		}
 		for ($i=0; $i < count($gids); $i++) 
 		{ 
 			$res[$i] = $this->Goods_model->show_all_goods($sno, $gids[$i]);
