@@ -34,31 +34,26 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo site_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
+          <a class="navbar-brand" href="<?php echo base_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
         </div>
 
 	    <div class="collapse navbar-collapse" id="navbar">
 	      <ul class="nav navbar-nav">
-	        <li><a href="<?php echo site_url('admin/main/show_goods') ?>">商品管理</a></li>
-	        <li><a href="<?php echo site_url('admin/main/show_wants') ?>">需求管理</a></li>
+	        <li><a href="<?php echo base_url('admin/main/show_goods') ?>">商品管理</a></li>
+	        <li><a href="<?php echo base_url('admin/main/show_wants') ?>">需求管理</a></li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
 	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">用户名 <span class="caret"></span></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="#">我的信息</a></li>
-	            <li role="separator" class="divider"></li>
-	            <li><a href="#">注销登录</a></li>
-	          </ul>
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $_SESSION['username']  ?></a>
 	        </li>
-	        <li><a href="#">退出</a></li>
+	        <li><a href="<?php  echo base_url('admin/Privilege/logout') ?>">退出</a></li>
 	      </ul>
 	    </div>
 	  </div>
 	</nav>
 	<div class="jumbotron">
 		<div class="container">
-			<h1>HELLO,您好</h1>
+			<h1><?php echo $_SESSION['username']  ?>,您好</h1>
 			<p>为校内学生提供发布出售和求购的信息的平台，节省交易时间和交易费用。整合福州大学二手市场信息资源，打造一个功能强大，方便快捷的校内二手交易平台。</p>
 			<h2>欢迎光临福大易宝后台管理系统</h2>
   		</div>

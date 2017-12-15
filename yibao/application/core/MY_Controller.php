@@ -72,7 +72,8 @@ class Admin_Controller extends CI_Controller
 
 			if ( ! isset($_SESSION['username']) )
 			{
-				redirect('admin/Privilege/login');
+				// redirect(base_url().'admin/Privilege/login');
+				show_notice('请先登录',base_url().'admin/Privilege/login',URL_LOCATION);
 			}
 		}
 }

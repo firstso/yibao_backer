@@ -31,5 +31,40 @@ function echo_failure($error_code,$message) {
 
 
 
+function show_notice($msg,$url="",$mod=HISTORY_BACK){
+					$modscript="";
+					switch ($mod) {
+						case HISTORY_BACK:
+						$modscript='window.history.back()';
+						break;
+						case BACK_REFRESH:
+						$modscript="window.location.href=' ".$_SERVER['HTTP_REFERER']."'";
+						break;
+						case URL_LOCATION:
+						$modscript="window.location.href= '".$url."' ";
+						break;
+					}
+						$msg=addslashes($msg);//转义
+						$msg=str_replace(PHP_EOL, "", $msg);//讲斜杠替换成"" . PHP_EOL:=windows: \r\n  unix/linux: \n
+
+echo <<<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>系统提示</title>
+</head>
+<body>
+	<script>
+	alert('$msg');
+	$modscript
+	</script>
+</body>
+</html>
+EOF;
+exit;	
+}
+
+
 
 ?>

@@ -2,7 +2,6 @@
 header("content-type:text/html;charset=utf-8");         //设置编码
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-session_start();
 /**
 * 
 */
@@ -23,16 +22,12 @@ class Privilege extends CI_Controller
 
 	public function login()
 	{
-		// echo 'log';
-		// echo ;
+
 		$this->load->view('admin/login.html');
-		// echo site_url('admin/Privilege/signin');
-
-
 	}
 
 
-public function signin()
+	public function signin()
 	{	
 			try
 			{
@@ -60,7 +55,7 @@ public function signin()
 								{ #保存session
 
 									$_SESSION['username'] = $username;
-									redirect('admin/main/index');
+									redirect(base_url().'admin/main/index');
 
 								}else {
 									throw new Exception("用户名或密码错误，请重新填写", 1);
@@ -75,10 +70,22 @@ public function signin()
 
 		catch(Exception $e)
 			{
-				echo $e->getMessage() ;
+				show_notice($e->getMessage(),'',HISTORY_BACK);
+
 			}
 
 	}
+
+
+
+	public function  logout()
+	{
+		unset($_SESSION['username']);
+		redirect(base_url().'admin/Privilege/login');
+	}
+
+
+
 
 }
 
