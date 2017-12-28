@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 	<meta charset="UTF-8">
+	<title>易宝后台管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/x-icon" href="../img/icon.png" />
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/index.js"></script>
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/index.css"> -->
+
+	<meta charset="UTF-8">
+	<title>易宝后台管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url('/style/img/icon.png') ?>" />
+	<script src=" <?php echo base_url('/style/js/jquery.min.js') ?> "></script>
+	<script src="<?php echo base_url('/style/js/bootstrap.min.js') ?>"></script>
+	<script src="<?php echo base_url('/style/js/index.js') ?>"></script>
+	<link rel="stylesheet" href="<?php echo base_url('/style/css/bootstrap.min.css') ?>">
+	<link rel="stylesheet" href="<?php echo base_url('/style/css/index.css') ?>">
+
+
+</head>
+
+
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="container">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<?php echo base_url('admin/main/index')   ?>"><img src="<?php echo base_url('/style/img/icon.png') ?>" alt=""></a>
+        </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="navbar">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="<?php echo base_url('admin/main/show_goods') ?>">商品管理</a></li>
+	        <li><a href="<?php echo base_url('admin/main/show_wants') ?>">需求管理</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $_SESSION['username']  ?></a>
+	        </li>
+	        <li><a href="<?php  echo base_url('admin/Privilege/logout') ?>">退出</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+
+	<div class="media">
+	
+	<?php  foreach($goods as $each):?>
+		
+	<form method = "POST" action="<?php echo base_url('admin/main/delete_goods') ?>" >
+		
+		<div class="container">
+		  <div class="row" >
+			<div class="col-sm-3">
+				<!-- img-responsive图片响应式 -->
+				<img src="<?php echo base_url().$each['photo'][0]   ?>" class="img-responsive" alt="">
+			</div>
+			<div class="col-sm-9">
+				<h3><?php echo $each['goods_name'] ?></h3>
+				<p><?php echo $each['description'] ?></p>
+				<div class="detail">
+					<span style="color: red;font-size: 20px;padding: 0 5px;">￥<?php echo $each['price'] ?></span>
+				    <span><?php echo $each['nickname'] ?></span>
+				    <span style="padding: 0 5px;">发布于</span>
+				    <span><?php echo $each['time'] ?></span>
+					<input type="hidden"  name="gid" value="<?php  echo $each['gid']  ?>  "  >
+
+			    </div>
+			    <button class="btn btn-danger" id="delete-good">删除此商品</button>
+			</div>
+		</div>
+		</div>
+
+	</form>
+
+	<?php  endforeach ?>
+
+
+	</div>
+</body>
+</html>

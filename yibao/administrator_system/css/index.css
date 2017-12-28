@@ -1,0 +1,58 @@
+.navbar-brand{
+	padding: 0 20px 0 10px;
+	margin: 0 20px 0 10px;
+}
+.jumbotron{
+	margin-top: 50px;
+	padding: 80px 0;
+}
+.media{
+	margin-top:80px; 
+}
+.media .container{
+	border: 2px solid #eee;
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px 1px #ccc;
+	padding: 30px;
+	margin: 0 auto 30px; 
+}
+.media-body{
+	position: relative;
+}
+.media-body h3{
+	font-size: 20px;
+}
+.media-body p{
+	font-size: 13px;
+}
+.detail{
+	float: right;
+}
+/*#delete-good{
+	position: absolute;
+	bottom: 0px;
+	left: 10px;
+	float: left;
+}*/
+#delete-want{
+	font-size: 12px;
+}
+.clear {
+  clear: both;
+}
+
+/*大于等于768px*/
+@media (min-width: 768px) {
+.detail{
+	font-size: 13px;
+}
+#delete-want{
+	font-size: 14px;
+}
+.media-body h3{
+	font-size: 30px;
+}
+.media-body p{
+	font-size: 15px;
+}
+}
